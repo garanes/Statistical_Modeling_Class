@@ -17,3 +17,9 @@ md1_interaction = lmer(vowel_dur ~ voicing * (accent_type + prosodic_boundary +
                      data=german)
 
 anova(md1_interaction,md1,test="Chisq")
+
+md1_no_voicing = lmer(vowel_dur ~ accent_type + prosodic_boundary +
+                 place + vowel + norming_voiceless_count + 		
+                 (1+voicing|subject) + (1+voicing|item_pair),
+               data=german)
+anova(md1_no_voicing, md1, test = 'Chisq')
