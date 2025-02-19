@@ -1,1 +1,4 @@
+library("lme4"); library("tidyverse"); library("broom"); library("ggeffects")
 
+
+german <- read.csv("roettgerEtAlData.csv")
