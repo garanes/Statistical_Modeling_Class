@@ -27,7 +27,7 @@ anova(md1_no_voicing, md1, test = 'Chisq')
 #Create the table
 md1 %>%
   ggplot(aes(x = vowel_dur, y = subject)) +
-  geom_point() + 
+  geom_boxplot() + 
   geom_errorbar(aes(ymin = conf.low,
                     ymax = conf.high),
                 width = 0.2) +
