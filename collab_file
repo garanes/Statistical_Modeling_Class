@@ -23,3 +23,12 @@ md1_no_voicing = lmer(vowel_dur ~ accent_type + prosodic_boundary +
                  (1+voicing|subject) + (1+voicing|item_pair),
                data=german)
 anova(md1_no_voicing, md1, test = 'Chisq')
+
+#Create the table
+md1 %>%
+  ggplot(aes(x = vowel_dur, y = subject)) +
+  geom_point() + 
+  geom_errorbar(aes(ymin = conf.low,
+                    ymax = conf.high),
+                width = 0.2) +
+  coord_flip()
