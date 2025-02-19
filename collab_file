@@ -9,4 +9,11 @@ german <- read.csv("roettgerEtAlData.csv")
 md1 = lmer(vowel_dur ~ voicing +	accent_type + prosodic_boundary +	
                 place + vowel + norming_voiceless_count +
                 (1+ voicing|subject) + (1+ voicing|item_pair),
-              data=E1)
+              data=german)
+
+md1_interaction = lmer(vowel_dur ~ voicing * (accent_type + prosodic_boundary +	
+                       place + vowel + norming_voiceless_count +
+                       (1+ voicing|subject) + (1+ voicing|item_pair)),
+                     data=german)
+
+anova(md1_interaction,md1,test="Chisq")
