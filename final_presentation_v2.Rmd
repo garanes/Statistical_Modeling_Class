@@ -46,6 +46,13 @@ md1.tidy
 ```
 vowels estimated to be 8.7 ms longer before devoiced stops rather than to voiceless stops (SE = 2.03 ms)
 
+### R2 test
+```{r}
+library(MuMIn)
+r.squaredGLMM(md1) 
+```
+R2c = 0.7901375, pretty good fit
+
 ### Plotting of the model
 ### plotting the predicted values
 ```{r}
