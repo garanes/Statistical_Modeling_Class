@@ -137,16 +137,3 @@ After removing, there were still no interactions between VOICING and any of the 
 anova(md2, md2_no_voicing, test = 'Chisq')
 ```
 After removing, voicing still didn't have a significant effect on vowel duration (χ2 (1) = 13.37, p<0.0003)
-
-```{r}
-box_subject <- ggplot(german_filtered, aes(x=vowel_dur, y=subject)) + geom_point(color="darkred") + 
-  ggtitle("Vowel Duration According to Subject") + xlab("Vowel Duration") + ylab("Subject") + 
-  coord_flip()
-```
-
-```{r}
-box_items <- ggplot(german_filtered, aes(x=vowel_dur, y=item_pair)) + geom_point(color="darkblue") + 
-  ggtitle("Vowel Duration According to Items") + xlab("Vowel Duration") + ylab("Items") +
-  coord_flip()
-```
-
