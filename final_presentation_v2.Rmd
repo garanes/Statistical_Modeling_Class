@@ -1,0 +1,145 @@
+---
+title: "Final_project"
+output:
+  html_document: default
+  pdf_document:
+    latex_engine: xelatex
+date: "2025-02-19"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Load the dataset relavent to Experiment 1:
+
+```{r}
+library(dplyr)
+library(tidyverse)
+library(broom.mixed)
+library(lme4)
+library(ggeffects)
+roettgerEtAlData <- read.csv("C:/Users/17390/Desktop/roettgerEtAlData.csv")
+german <- roettgerEtAlData %>% 
+  filter(subject >= 1 & subject <= 16)
+```
+
+### Build the Models
+md1: model that examines the effect of voicing and other predictors on vowel duration (main effect model)
+md1_interaction: model that examines the interaction of voicing with other predictors
+md1_no_voicing: same as md1 but excludes voicing as a predictor
+
+(1+ voicing|subject) + (1+ voicing|item_pair): random slopes and intercepts for subject and item_pair
+
+```{r}
+md1 = lmer(vowel_dur ~ voicing +	accent_type + prosodic_boundary +	
+                place + vowel + norming_voiceless_count +
+                (1+ voicing|subject) + (1+ voicing|item_pair),
+              data=german)
+```
+
+### Summary of the main effect model:
+
+```{r}
+md1.tidy <- tidy(md1, conf.int = T)
+md1.tidy
+```
+vowels estimated to be 8.7 ms longer before devoiced stops rather than to voiceless stops (SE = 2.03 ms)
+
+### Plotting of the model
+### plotting the predicted values
+```{r}
+mymodel <- predict_response(md1, terms = 'voicing', type = 'random')
+plot(mymodel)
+```
+### plotting of the 95% CI
+```{r}
+md1.tidy %>% 
+  ggplot(aes(x= term, y = estimate)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = conf.low,
+                    ymax = conf.high),
+                width = 0.5) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  coord_flip()+
+  labs(y = "Vowel Duration (ms)", x = "Predictors", title = "Plotting of 95% CI")
+```
+
+### Test 1: likelihood ratio test to compare md1 and md1_interaction
+H0: The interaction between Voicing and other predictors does not have a significant effect on vowel duration
+```{r}
+md1_interaction = lmer(vowel_dur ~ voicing * (accent_type + prosodic_boundary +	
+                       place + vowel + norming_voiceless_count) +
+                       (1+ voicing|subject) + (1+ voicing|item_pair),
+                     data=german)
+anova(md1,md1_interaction,test="Chisq")
+```
+there were no interactions between VOICING and any of the control variables (χ2 (10) = 9.53, p = 0.48), H0 is accepted
+
+
+### Test 2: likelihood ratio test to compare md1 and md1_no_voicing
+Ho: Voicing does not have a significant effect on vowel duration
+```{r}
+md1_no_voicing = lmer(vowel_dur ~ accent_type + prosodic_boundary +
+                 place + vowel + norming_voiceless_count + 		
+                 (1+voicing|subject) + (1+voicing|item_pair),
+               data=german)
+anova(md1, md1_no_voicing, test = 'Chisq')
+```
+Voicing had a significant effect on vowel duration (χ2 (1) = 13.76, p<0.0003), H0 is rejected
+
+### subset analyses:  exclude all not_usable responses
+```{r}
+german_filtered <- german %>% 
+  filter(usable == "usable")
+1 - nrow(german_filtered) / nrow (german)
+```
+removed 7.73% datapoints
+
+### repeat the tests
+```{r}
+md2 = lmer(vowel_dur ~ voicing +	accent_type + prosodic_boundary +	
+                place + vowel + norming_voiceless_count +
+                (1+ voicing|subject) + (1+ voicing|item_pair),
+              data=german_filtered)
+
+md2_interaction = lmer(vowel_dur ~ voicing * (accent_type + prosodic_boundary +	
+                       place + vowel + norming_voiceless_count +
+                       (1+ voicing|subject) + (1+ voicing|item_pair)),
+                     data=german_filtered)
+
+md2_no_voicing = lmer(vowel_dur ~ accent_type + prosodic_boundary +
+                 place + vowel + norming_voiceless_count + 		
+                 (1+voicing|subject) + (1+voicing|item_pair),
+               data=german_filtered)
+```
+
+
+```{r}
+md1.tidy <- tidy(md1)
+md1.tidy
+```
+vowels are 8.7 ms longer (SE = 2.03 ms) before devoiced stops.
+
+```{r}
+anova(md2,md2_interaction,test="Chisq")
+```
+After removing, there were still no interactions between VOICING and any of the control variables (χ2 (10) = 10.77, p = 0.376)
+
+```{r}
+anova(md2, md2_no_voicing, test = 'Chisq')
+```
+After removing, voicing still didn't have a significant effect on vowel duration (χ2 (1) = 13.37, p<0.0003)
+
+```{r}
+box_subject <- ggplot(german_filtered, aes(x=vowel_dur, y=subject)) + geom_point(color="darkred") + 
+  ggtitle("Vowel Duration According to Subject") + xlab("Vowel Duration") + ylab("Subject") + 
+  coord_flip()
+```
+
+```{r}
+box_items <- ggplot(german_filtered, aes(x=vowel_dur, y=item_pair)) + geom_point(color="darkblue") + 
+  ggtitle("Vowel Duration According to Items") + xlab("Vowel Duration") + ylab("Items") +
+  coord_flip()
+```
+
