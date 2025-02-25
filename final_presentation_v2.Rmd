@@ -136,4 +136,4 @@ After removing, there were still no interactions between VOICING and any of the 
 ```{r}
 anova(md2, md2_no_voicing, test = 'Chisq')
 ```
-After removing, voicing still didn't have a significant effect on vowel duration (χ2 (1) = 13.37, p<0.0003)
+After removing, voicing still had a significant effect on vowel duration (χ2 (1) = 13.37, p<0.0003)
