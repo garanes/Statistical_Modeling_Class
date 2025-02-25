@@ -121,9 +121,12 @@ box_subject <- ggplot(german_filtered, aes(x=vowel_dur, y=subject)) + geom_point
   ggtitle("Vowel Duration According to Subject") + xlab("Vowel Duration") + ylab("Subject") + 
   coord_flip()
 ```
+Scatterplot of vowel duration corresponding to the Subjects of the study.
 
 ```{r}
 box_items <- ggplot(german_filtered, aes(x=vowel_dur, y=item_pair)) + geom_point(color="darkblue") + 
   ggtitle("Vowel Duration According to Items") + xlab("Vowel Duration") + ylab("Items") +
   coord_flip()
 ```
+Scatterplot of vowel duration corresponding to the Items of the study.
+
